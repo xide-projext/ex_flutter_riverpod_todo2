@@ -7,7 +7,7 @@ part 'main.g.dart';
 
 // 1페이지에서 1개의 클래스에서 같은 상황이라서 어렵지않게 상태를 공유 할 수 있다.
 void main() {
-  runApp(MyApp());
+  runApp(ProviderScope( child: MyApp()));
 }
 
 
@@ -25,14 +25,15 @@ class Counter extends _$Counter {
   int build() => 0;
 
   void increment() => state++;
+  void decrease() => state--;
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends ConsumerStatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends ConsumerState<MyApp> {
   int totalTodos = 0;
 
   void updateTotalStatus(int count) {
@@ -43,39 +44,36 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return 
+      MaterialApp(
         title: 'Todo x 2 App',
         home: Scaffold(
-          appBar: AppBar(title: Text('Todo x 2 List : with callback')),
+          appBar: AppBar(title: Text('Todo x 2 List : without callback func')),
           body: Column(
             children: [
-              Text('Total status : $totalTodos'),
+              Text('Total status : ${ref.watch(counterProvider)}'),
               SizedBox(
                 height: 300.0,
-                child: TodoListScreen(
-                onStatusChanged: (count) => updateTotalStatus(count),
-              )),
+                child: TodoListScreen()),
               SizedBox(
                 height: 300.0,
-                child: TodoListScreen(
-                onStatusChanged: (count) => updateTotalStatus(count),
-              )),
+                child: TodoListScreen()),
             ],
           ),
         ));
-  }
+    }
 }
 
-class TodoListScreen extends StatefulWidget {
-  final Function(int) onStatusChanged;
+class TodoListScreen extends ConsumerStatefulWidget {
+  // final Function(int) onStatusChanged;
 
-  TodoListScreen({super.key, required this.onStatusChanged});
+  TodoListScreen({super.key});
 
   @override
   _TodoListScreenState createState() => _TodoListScreenState();
 }
 
-class _TodoListScreenState extends State<TodoListScreen> {
+class _TodoListScreenState extends ConsumerState<TodoListScreen> {
   List<String> todos = [];
   String todoStatus = "Status : ";
   TextEditingController controller = TextEditingController();
@@ -85,8 +83,9 @@ class _TodoListScreenState extends State<TodoListScreen> {
       todos.add(controller.text);
       controller.clear();
       todoStatus = "Status : ${todos.length}";
+      ref.read(counterProvider.notifier).increment();
     });
-    widget.onStatusChanged(todos.length);
+    // widget.onStatusChanged(todos.length);
 
   }
 
@@ -94,8 +93,9 @@ class _TodoListScreenState extends State<TodoListScreen> {
     setState(() {
       todos.removeAt(index);
       todoStatus = "Status : ${todos.length}";
+      ref.read(counterProvider.notifier).decrease();
     });
-    widget.onStatusChanged(todos.length);
+    // widget.onStatusChanged(todos.length);
   }
 
   @override

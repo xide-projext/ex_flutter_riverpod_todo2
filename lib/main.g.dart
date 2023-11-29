@@ -6,7 +6,7 @@ part of 'main.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$counterHash() => r'4243b34530f53accfd9014a9f0e316fe304ada3e';
+String _$counterHash() => r'eadfee631c1188325596d4e9a2bbfd15b2e2c26a';
 
 /// Annotating a class by `@riverpod` defines a new shared state for your application,
 /// accessible using the generated [counterProvider].
